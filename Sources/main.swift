@@ -4,39 +4,44 @@ import Foundation
 @available(macOS 10.15, *)
 struct NetworkProfilesCLI {
     static func main() {
-        print("NetworkProfilesCLI started") // Debugging-Ausgabe
         if CommandLine.arguments.count > 1 {
-            let action = CommandLine.arguments[1]
-            if action == "gui" {
-                // If the app is available on macOS 11.0 or later, run it
-                if #available(macOS 11.0, *) {
-                    Task {
-                        await NetworkProfilesApp.main()
-                    }
+            let configPath = CommandLine.arguments[1]
+            if CommandLine.arguments.count > 2 {
+                let action = CommandLine.arguments[2]
+                if action == "help" {
+                    showUsage()
                 } else {
-                    print("The GUI is only available on macOS 11.0 or newer.")
-                    exit(1)
+                    runCommandLineApp(configPath: configPath, action: action)
                 }
             } else {
-                runCommandLineApp()
+                selectAndActivateProfile(configPath: configPath)
             }
         } else {
-            print("Usage: NetworkProfiles_cli <config-file-path> [create|delete|gui|list-interfaces]")
+            showUsage()
             exit(1)
         }
     }
 }
 
-// Function to handle the CLI version of the app
-func runCommandLineApp() {
-    print("Running command-line app...")
-    guard CommandLine.arguments.count > 1 else {
-        print("Invalid arguments. Provide a valid config file path.")
+func selectAndActivateProfile(configPath: String) {
+    if !FileManager.default.fileExists(atPath: configPath) {
+        print("Configuration file does not exist at path: \(configPath).")
         exit(1)
     }
-    let configPath = CommandLine.arguments[1]
 
+    guard let config = loadConfig(from: configPath) else {
+        print("Failed to load configuration file.")
+        exit(1)
+    }
+
+    selectAndApplyProfile(config: config, configPath: configPath)
+}
+
+// Function to handle the CLI version of the app
+func runCommandLineApp(configPath: String, action: String) {
+    print("Running command-line app...")
     print("Config path: \(configPath)")
+    print("Action: \(action)")
 
     if !FileManager.default.fileExists(atPath: configPath) {
         print("Configuration file does not exist at path: \(configPath). Creating a new one.")
@@ -54,22 +59,12 @@ func runCommandLineApp() {
         return
     }
 
-    if CommandLine.arguments.count == 2 {
-        selectAndApplyProfile(config: config, configPath: configPath)
-    } else {
-        let action = CommandLine.arguments[2]
-        print("Action: \(action)")
-
-        if action == "list-interfaces" {
-            let interfaces = listAllNetworkInterfaces()
-            print("Available network interfaces:")
-            for interface in interfaces {
-                print(interface)
-            }
-            exit(0)
-        }
-
+    if action == "create" || action == "delete" || action == "help" {
         runAction(action, with: config, at: configPath)
+    } else {
+        print("Unknown action: \(action)")
+        showUsage()
+        exit(1)
     }
 }
 
@@ -96,10 +91,22 @@ func runAction(_ action: String, with config: Config, at configPath: String) {
         }
     case "delete":
         print("Feature not implemented yet.")
+    case "help":
+        showUsage()
     default:
         print("Unknown action: \(action)")
+        showUsage()
         exit(1)
     }
+}
+
+func showUsage() {
+    print("""
+    Usage: NetworkProfiles_cli <config-file-path> [create|delete|help]
+    - create: Create a new network profile
+    - delete: Delete an existing network profile (not implemented yet)
+    - help: Show this usage information
+    """)
 }
 
 if #available(macOS 10.15, *) {

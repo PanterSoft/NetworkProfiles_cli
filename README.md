@@ -12,13 +12,15 @@
 Um die CLI-Version der Anwendung auszuführen, verwenden Sie den folgenden Befehl:
 
 ```sh
-swift run NetworkProfiles_cli <config-file-path> [create|delete|gui]
+swift run NetworkProfiles_cli <config-file-path> [create|delete|help]
 ```
 
 - `<config-file-path>`: Pfad zur Konfigurationsdatei
 - `create`: Erstellt ein neues Netzwerkprofil
 - `delete`: Löscht ein bestehendes Netzwerkprofil (noch nicht implementiert)
-- `gui`: Startet die GUI-Version der Anwendung (nur auf macOS 11.0 oder neuer verfügbar)
+- `help`: Zeigt diese Hilfeinformationen an
+
+Wenn keine Aktion (`create`, `delete`, `help`) angegeben wird, können Sie ein vorhandenes Profil aus der Konfigurationsdatei auswählen und aktivieren.
 
 ### Graphical User Interface (GUI)
 
