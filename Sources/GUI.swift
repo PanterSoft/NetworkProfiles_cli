@@ -17,6 +17,7 @@ func createMenuBarApp(configPath: String) {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var configPath: String
+    var configWindowController: ConfigWindowController?
 
     init(configPath: String) {
         self.configPath = configPath
@@ -58,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("Failed to load config from path: \(configPath)")
         }
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Configure", action: nil, keyEquivalent: "c"))
+        menu.addItem(NSMenuItem(title: "Configure", action: #selector(showConfigWindow), keyEquivalent: "c"))
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
         print("Menu constructed successfully")
@@ -71,5 +72,45 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             print("Failed to load config from path: \(configPath)")
         }
+    }
+
+    @objc func showConfigWindow() {
+        if configWindowController == nil {
+            configWindowController = ConfigWindowController()
+        }
+        configWindowController?.showWindow(nil)
+        configWindowController?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+}
+
+class ConfigWindowController: NSWindowController {
+    override init(window: NSWindow?) {
+        super.init(window: window)
+        // Initialisieren Sie das Fenster hier
+        let window = NSWindow(contentRect: NSMakeRect(0, 0, 480, 270),
+                              styleMask: [.titled, .closable, .resizable],
+                              backing: .buffered, defer: false)
+        window.title = "Configuration"
+        self.window = window
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    override func showWindow(_ sender: Any?) {
+        super.showWindow(sender)
+        if let window = self.window {
+            let contentViewController = NSViewController()
+            let contentView = NSView(frame: window.contentView!.bounds)
+            contentViewController.view = contentView
+            window.contentViewController = contentViewController
+
+            let label = NSTextField(labelWithString: "Configuration Settings")
+            label.frame = NSRect(x: 20, y: window.contentView!.bounds.height - 40, width: 200, height: 20)
+            contentView.addSubview(label)
+        }
+        self.window?.makeKeyAndOrderFront(sender)
     }
 }
