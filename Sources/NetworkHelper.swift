@@ -224,3 +224,16 @@ func selectProfile(config: Config) -> NetworkProfile? {
 
     return config.profiles[index - 1]
 }
+
+func getAllProfileNames(config: Config) -> [String] {
+    return config.profiles.map { $0.profileName }
+}
+
+func applyProfileByName(config: Config, profileName: String) {
+    if let profile = config.profiles.first(where: { $0.profileName == profileName }) {
+        applyNetworkSettings(profile: profile)
+        print("Profile \(profile.profileName) applied successfully.")
+    } else {
+        print("Profile \(profileName) not found.")
+    }
+}

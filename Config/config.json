@@ -1,20 +1,28 @@
 {
   "profiles" : [
     {
-      "mode" : "dhcp",
       "profileName" : "KN_Privat",
-      "interfaceName" : "AX88179A"
+      "interfaceName" : "AX88179A",
+      "mode" : "dhcp"
     },
     {
+      "mode" : "manual",
+      "interfaceName" : "AX88179A",
+      "ipv4Address" : "141.37.172.9",
+      "profileName" : "HTWG",
       "dnsServers" : [
         "141.37.11.1",
         "141.37.11.2"
       ],
-      "router" : "141.37.172.254",
       "subnetMask" : "255.255.255.0",
+      "router" : "141.37.172.254"
+    },
+    {
+      "router" : "192.168.2.1",
       "interfaceName" : "AX88179A",
-      "profileName" : "HTWG",
-      "ipv4Address" : "141.37.172.9",
+      "profileName" : "BRT_Iltis_eth",
+      "subnetMask" : "255.255.255.0",
+      "ipv4Address" : "192.168.2.10",
       "mode" : "manual"
     }
   ]
