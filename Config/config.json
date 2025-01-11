@@ -1,0 +1,21 @@
+{
+  "profiles" : [
+    {
+      "mode" : "dhcp",
+      "profileName" : "KN_Privat",
+      "interfaceName" : "AX88179A"
+    },
+    {
+      "dnsServers" : [
+        "141.37.11.1",
+        "141.37.11.2"
+      ],
+      "router" : "141.37.172.254",
+      "subnetMask" : "255.255.255.0",
+      "interfaceName" : "AX88179A",
+      "profileName" : "HTWG",
+      "ipv4Address" : "141.37.172.9",
+      "mode" : "manual"
+    }
+  ]
+}
